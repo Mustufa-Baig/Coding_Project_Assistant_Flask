@@ -1,0 +1,87 @@
+from cerebras.cloud.sdk import Cerebras
+import os
+
+client = Cerebras(api_key=str(os.environ.get('CEREBRAS_API_KEY')))
+
+def generate_technical_description(script):
+  stream = client.chat.completions.create(
+      messages=[
+          {
+              "role": "system",
+              "content": 'You are a Python Software Engineer. The following is a description of a Python Program your client wants you to build, no further info will be provided after the initial brief. Carefully design the program, which will be placed all in a single .py file once written. Dont write Python code, Write a well formatted technical description (detailed but not too long) for the developers to build the program. NO INTROS, NO OUTROS.'
+          },
+          {
+              "role":"user",
+              "content":script
+          }
+      ],
+      model="qwen-3-32b",
+      stream=True,
+      max_completion_tokens=12288,
+      temperature=0.2,
+      top_p=1
+  )
+
+  ALL=""
+  for chunk in stream:
+    ALL+=chunk.choices[0].delta.content or ""
+  return ALL
+
+def generate_sudo_code(script):
+  stream = client.chat.completions.create(
+      messages=[
+          {
+              "role": "system",
+              "content": 'You are a Python Software Developer. The following is a technical description of a Python Program that the Software Engineer in your team wants you to build, no further info will be provided after the initial description. Carefully design the flow of the program (which function calls which other function, and what each function does), which will be placed all in a single .py file once written. Dont write Python code, Write Sudo Code (breif but not too complicated) for the other developers in your team to build the program. NO INTROS, NO OUTROS.'
+          },
+          {
+              "role":"user",
+              "content":script
+          }
+      ],
+      model="qwen-3-32b",
+      stream=True,
+      max_completion_tokens=12288,
+      temperature=0.2,
+      top_p=1
+  )
+
+  ALL=""
+  for chunk in stream:
+    ALL+=chunk.choices[0].delta.content or ""
+  return ALL
+
+def generate_python_code(script):
+  stream = client.chat.completions.create(
+      messages=[
+          {
+              "role": "system",
+              "content": 'You are a Python Programmer. The following is the Sudo Code of a Python Program that the Senior Software Developer in your team wants you to build, no further info will be provided after the initial description. Carefully write the Python Program (Follow the Sudo Code given to you), dont think too much. The program will be placed all in a single .py file once written. NO INTROS, NO OUTROS.'
+          },
+          {
+              "role":"user",
+              "content":script
+          }
+      ],
+      model="qwen-3-32b",
+      stream=True,
+      max_completion_tokens=12288,
+      temperature=0.2,
+      top_p=1
+  )
+
+  ALL=""
+  for chunk in stream:
+    ALL+=chunk.choices[0].delta.content or ""
+  return ALL
+
+
+def generate_app(brief):
+  tech_des=generate_technical_description(brief).split("</think>")[1]
+  print('t_d')
+  sudo_code=generate_sudo_code(tech_des).split("</think>")[1]
+  print('s_c')
+  python_code=generate_python_code(sudo_code).split("</think>")[1][2:]
+  print('p_c')
+
+  return python_code
