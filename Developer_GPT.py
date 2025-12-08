@@ -3,6 +3,30 @@ import os
 
 client = Cerebras(api_key=str(os.environ.get('CEREBRAS_API_KEY')))
 
+def generate_app_name(script):
+  stream = client.chat.completions.create(
+      messages=[
+          {
+              "role": "system",
+              "content": 'You are a Tech Nerd. The following is a description of a Python Program your friend is writing. no further info will be provided after the initial brief. Carefully Give the program a good name (replace spaces with underscores, no special characters). NO INTROS, NO OUTROS, JUST THE PROGRAM NAME ON A SINGLE LINE.'
+          },
+          {
+              "role":"user",
+              "content":script
+          }
+      ],
+      model="qwen-3-32b",
+      stream=True,
+      max_completion_tokens=4096,
+      temperature=0.2,
+      top_p=1
+  )
+
+  ALL=""
+  for chunk in stream:
+    ALL+=chunk.choices[0].delta.content or ""
+  return ALL
+  
 def generate_technical_description(script):
   stream = client.chat.completions.create(
       messages=[

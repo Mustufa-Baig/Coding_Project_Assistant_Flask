@@ -1,19 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Coding helper</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Assistant</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #8EC5FC, #E0C3FC);
+        }
+
+        h1 {
+            font-size: 80px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #eeeeee;
+        }
+
+        form {
+            width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-end; 
+        }
+
+        input {
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 50px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: none;
+            background-color: #4A4AFF;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #2F2FFF;
+        }
+    </style>
 </head>
 <body>
-	<!--
-	<form method="POST" action="">
-		<input>
-		<button type="submit">
-	</form>
-	-->
-	<h1>
-		Hello world
-	</h1>
+
+    <h1>Coding Assistant</h1>
+    <h3>Just write what you want, and I'll build it for you ;)</h3>
+    <form action="/build_app" method="post">
+        <input type="text" name="brief" placeholder="Enter project brief" required>
+        <button type="submit">Submit</button>
+    </form>
+
 </body>
 </html>

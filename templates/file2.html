@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Assistant</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;               /* remove default margin */
+            padding: 0;              /* remove extra padding */
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #8EC5FC, #E0C3FC);
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin: 0;
+            padding: 20px 0;
+            font-size: 28px;
+            font-weight: 600;
+            color: #000000;
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.5); /* slightly transparent white */
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Back button styling */
+        .back-button {
+            display: inline-block;
+            margin: 15px 30px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: none;
+            background-color: #4A4AFF;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .back-button:hover {
+            background-color: #2F2FFF;
+        }
+        /* Left align the back button */
+        .back-container {
+            width: 80%;
+            max-width: 800px;
+            text-align: left;          /* align contents to the left */
+        }
+
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 6px 12px;           /* uniform vertical padding */
+            font-size: 14px;
+            border-radius: 8px;
+            border: none;
+            background-color: #4A4AFF;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;          /* vertical centering */
+            justify-content: center;      /* horizontal centering of content if needed */
+            gap: 6px;                     /* space between icon and text */
+            line-height: 1;               /* prevents extra spacing from font */
+            transition: 0.2s;
+        }
+
+
+        .copy-button:hover {
+            background-color: #2F2FFF;
+        }
+        .code-box {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;       /* center horizontally and add vertical spacing */
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            text-align: left;
+            backdrop-filter: blur(6px);
+            color: #000;
+            font-family: "Courier New", monospace;
+            font-size: 16px;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        /* Icon styling */
+        .copy-button svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>{{ title }}</h1>
+    <!-- Back button container for left alignment -->
+    <div class="back-container">
+        <a href="../" class="back-button">← Back</a>
+    </div>
+
+    <div class="code-box">
+<button class="copy-button" onclick="copyCode()">Copy <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H8C6.9 1 6 1.9 6 3V4H4C2.9 4 2 4.9 2 6V20C2 21.1 2.9 22 4 22H16C17.1 22 18 21.1 18 20V6C18 4.9 17.1 4 16 4H14V3C14 1.9 13.1 1 12 1H16ZM8 3H16V4H8V3ZM16 20H4V6H16V20Z"/></svg>
+</button>
+<pre id="codeContent">
+{{ code }}
+</pre>
+</div>
+
+<script>
+function copyCode() {
+    const code = document.getElementById('codeContent').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+        alert('Code copied to clipboard!');
+    }).catch(err => {
+        alert('Failed to copy code.');
+        console.error(err);
+    });
+}
+</script>
+
+</body>
+</html>
