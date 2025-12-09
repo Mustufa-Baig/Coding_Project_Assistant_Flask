@@ -27,6 +27,31 @@ def generate_app_name(script):
     ALL+=chunk.choices[0].delta.content or ""
   return ALL
   
+def fix_code(code):
+  stream = client.chat.completions.create(
+      messages=[
+          {
+              "role": "system",
+              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, find any bugs present in it and fix them (if any) . Write the new python code complete from start to finish. NO INTROS, NO OUTROS, Just Code.'
+          },
+          {
+              "role":"user",
+              "content":code
+          }
+      ],
+      model="qwen-3-32b",
+      stream=True,
+      max_completion_tokens=12288,
+      temperature=0.2,
+      top_p=1
+  )
+
+  ALL=""
+  for chunk in stream:
+    ALL+=chunk.choices[0].delta.content or ""
+  return ALL
+
+
 def generate_technical_description(script):
   stream = client.chat.completions.create(
       messages=[
@@ -107,5 +132,7 @@ def generate_app(brief):
   print('s_c')
   python_code=generate_python_code(sudo_code).split("</think>")[1][2:]
   print('p_c')
+  python_code=fix_code(python_code).split("</think>")[1][2:]
+  print('f_p_c')
 
   return python_code
