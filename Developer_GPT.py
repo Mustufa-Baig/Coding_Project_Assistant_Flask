@@ -34,7 +34,7 @@ def find_bugs(code):
       messages=[
           {
               "role": "system",
-              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, find major bugs present in it (if any) and write solutions for them (do not write any code) and dont add any new features (ignore issues related to long term support and versatility), if no issues are found Write "NO ISSUES" , otherwise Write the problem description and a viable solution for them. NO INTROS, NO OUTROS.'
+              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, find major bugs present in it (if any) and write solutions for them (do not write any code) and dont add any new features (ignore issues related to long term support and versatility), the goal is to just make the app work, if no issues are found Write "NO ISSUES" , otherwise Write the problem description and a viable solution for them (only 1 sentence per issue). NO INTROS, NO OUTROS.'
           },
           {
               "role":"user",
@@ -53,12 +53,12 @@ def find_bugs(code):
     ALL+=chunk.choices[0].delta.content or ""
   return ALL
 
-def fix_bugs(code,bugs):
+def fix_bugs(code,bugs,brief):
   stream = client.chat.completions.create(
       messages=[
           {
               "role": "system",
-              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, along with the bugs present in it, fix them using the provided solutions. Write the entire Python Program complete, entirely from start to finish. NO INTROS, NO OUTROS.'
+              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, the original brief was "'+brief+'", along with the bugs present in it, fix them using the provided solutions. Write the entire Python Program complete, entirely from start to finish. NO INTROS, NO OUTROS.'
           },
           {
               "role":"user",
@@ -160,13 +160,13 @@ def generate_app(brief):
   print('p_c')
   
   x=0
-  while x<3:
+  while x<7:
     x+=1
     time.sleep(1)
     bugs=find_bugs(python_code).split("</think>")[1][2:]
     print(bugs)
     if "NO ISSUES" in bugs:
       break
-    python_code=fix_bugs(python_code,bugs).split("</think>")[1][2:]
+    python_code=fix_bugs(python_code,bugs,brief).split("</think>")[1][2:]
 
   return python_code
