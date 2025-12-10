@@ -1,5 +1,6 @@
 from cerebras.cloud.sdk import Cerebras
 import os
+import time
 
 client = Cerebras(api_key=str(os.environ.get('CEREBRAS_API_KEY')))
 
@@ -32,7 +33,7 @@ def fix_code(code):
       messages=[
           {
               "role": "system",
-              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, find any bugs present in it and fix them (if any) . Write the new python code complete from start to finish. NO INTROS, NO OUTROS, Just Code.'
+              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, find any bugs present in it and fix them (if any)  , if no issues are found Write "NO ISSUES" , otherwise Write the new python code complete from start to finish. NO INTROS, NO OUTROS, Just Code.'
           },
           {
               "role":"user",
@@ -81,7 +82,7 @@ def generate_sudo_code(script):
       messages=[
           {
               "role": "system",
-              "content": 'You are a Python Software Developer. The following is a technical description of a Python Program that the Software Engineer in your team wants you to build, no further info will be provided after the initial description. Carefully design the flow of the program (which function calls which other function, and what each function does), which will be placed all in a single .py file once written. Dont write Python code, Write Sudo Code (breif but not too complicated) for the other developers in your team to build the program. NO INTROS, NO OUTROS.'
+              "content": 'You are a Python Software Developer. The following is a technical description of a Python Program that the Software Engineer in your team wants you to build, no further info will be provided after the initial description. Carefully design the flow of the program (which function calls which other function, and what each function does), which will be placed all in a single .py file once written. Dont write Python code, Write Pseudo Code (brief but not too complicated) for the other developers in your team to build the program. NO INTROS, NO OUTROS.'
           },
           {
               "role":"user",
@@ -105,7 +106,7 @@ def generate_python_code(script):
       messages=[
           {
               "role": "system",
-              "content": 'You are a Python Programmer. The following is the Sudo Code of a Python Program that the Senior Software Developer in your team wants you to build, no further info will be provided after the initial description. Carefully write the Python Program (Follow the Sudo Code given to you), dont think too much. The program will be placed all in a single .py file once written. NO INTROS, NO OUTROS.'
+              "content": 'You are a Python Programmer. The following is the Pseudo Code of a Python Program that the Senior Software Developer in your team wants you to build, no further info will be provided after the initial description. Carefully write the Python Program (Follow the Sudo Code given to you), dont think too much. The program will be placed all in a single .py file once written. NO INTROS, NO OUTROS.'
           },
           {
               "role":"user",
@@ -132,7 +133,13 @@ def generate_app(brief):
   print('s_c')
   python_code=generate_python_code(sudo_code).split("</think>")[1][2:]
   print('p_c')
-  python_code=fix_code(python_code).split("</think>")[1][2:]
-  print('f_p_c')
+  last_working=python_code
+  x=0
+  while not("NO ISSUES" in python_code) and x<5:
+    time.sleep(2)
+    last_working=python_code
+    python_code=fix_code(python_code).split("</think>")[1][2:]
+    print('.')
+    x+=1
 
-  return python_code
+  return last_working
