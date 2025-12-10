@@ -27,17 +27,42 @@ def generate_app_name(script):
   for chunk in stream:
     ALL+=chunk.choices[0].delta.content or ""
   return ALL
-  
-def fix_code(code):
+
+
+def find_bugs(code):
   stream = client.chat.completions.create(
       messages=[
           {
               "role": "system",
-              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, find any bugs present in it and fix them (if any)  , if no issues are found Write "NO ISSUES" , otherwise Write the new python code complete from start to finish. NO INTROS, NO OUTROS, Just Code.'
+              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, find major bugs present in it (if any) and write solutions for them (do not write any code) and dont add any new features (ignore issues related to long term support and versatility), if no issues are found Write "NO ISSUES" , otherwise Write the problem description and a viable solution for them. NO INTROS, NO OUTROS.'
           },
           {
               "role":"user",
               "content":code
+          }
+      ],
+      model="qwen-3-32b",
+      stream=True,
+      max_completion_tokens=12288,
+      temperature=0.2,
+      top_p=1
+  )
+
+  ALL=""
+  for chunk in stream:
+    ALL+=chunk.choices[0].delta.content or ""
+  return ALL
+
+def fix_bugs(code,bugs):
+  stream = client.chat.completions.create(
+      messages=[
+          {
+              "role": "system",
+              "content": 'You are a Python Software Developer. The following is a Python Program your colleague has build, along with the bugs present in it, fix them using the provided solutions. Write the entire Python Program complete, entirely from start to finish. NO INTROS, NO OUTROS.'
+          },
+          {
+              "role":"user",
+              "content":"//  Faulty Code  //\n\n\n"+code+"\n\n\n//  Bugs and solutions for them  //\n\n\n"+bugs
           }
       ],
       model="qwen-3-32b",
@@ -133,13 +158,15 @@ def generate_app(brief):
   print('s_c')
   python_code=generate_python_code(sudo_code).split("</think>")[1][2:]
   print('p_c')
-  last_working=python_code
+  
   x=0
-  while not("NO ISSUES" in python_code) and x<5:
-    time.sleep(2)
-    last_working=python_code
-    python_code=fix_code(python_code).split("</think>")[1][2:]
-    print('.')
+  while x<3:
     x+=1
+    time.sleep(1)
+    bugs=find_bugs(python_code).split("</think>")[1][2:]
+    print(bugs)
+    if "NO ISSUES" in bugs:
+      break
+    python_code=fix_bugs(python_code,bugs).split("</think>")[1][2:]
 
-  return last_working
+  return python_code
