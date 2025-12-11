@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Assistant</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #8EC5FC, #E0C3FC);
+        }
+
+        h1 {
+            font-size: 80px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #eeeeee;
+            margin-bottom: 50px;
+        }
+
+        .options {
+            display: flex;
+            gap: 40px;
+        }
+
+        .option-card {
+            width: 260px;
+            padding: 30px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            color: white;
+            text-decoration: none;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .option-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .option-card h2 {
+            font-size: 35px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .option-card p {
+            font-size: 14px;
+            font-weight: 300;
+            color: #202020;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Coding Assistant</h1>
+    <h3>What would you like to do?</h3>
+
+    <div class="options">
+        <a href="/build" class="option-card">
+            <h2>Quick Build</h2>
+            <p>Describe your idea and generate a full project</p>
+        </a>
+
+        <a href="/chat" class="option-card">
+            <h2>Chat</h2>
+            <p>Talk with the assistant and explore your project idea</p>
+        </a>
+    </div>
+
+</body>
+</html>

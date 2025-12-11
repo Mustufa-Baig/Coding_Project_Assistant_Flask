@@ -28,6 +28,14 @@ def build_app(request: Request,brief: str = Form(...)):
 @app.get("/")
 def home():
 	html=""
+	with open('homepage.html','r') as file:
+		html=file.read()
+
+	return HTMLResponse(content=html)
+
+@app.get("/build")
+def home():
+	html=""
 	with open('file.html','r') as file:
 		html=file.read()
 
