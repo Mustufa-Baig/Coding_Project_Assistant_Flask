@@ -78,16 +78,40 @@ def fix_bugs(code,bugs,brief):
   return ALL
 
 
-def generate_technical_description(script):
+def finallize_technical_description(tech_des,brief):
   stream = client.chat.completions.create(
       messages=[
           {
               "role": "system",
-              "content": 'You are a Python Software Engineer. The following is a description of a Python Program your client wants you to build, no further info will be provided after the initial brief. Carefully design the program, which will be placed all in a single .py file once written. Dont write Python code, Write a well formatted technical description (detailed but not too long) for the developers to build the program. NO INTROS, NO OUTROS.'
+              "content": 'You are a Python Software Engineer. The following is a technical description written by your fellow Software Engineer, analyses it and figure out the safest and most primitive way to make the Software, the original brief given by the client was "'+brief+'" , no further info will be provided after the initial description. Carefully design the program, which will be placed all in a single .py file once written. Dont write Python code, Write a well formatted technical description (detailed but not too long) for the developers to build the program. NO INTROS, NO OUTROS.'
           },
           {
               "role":"user",
-              "content":script
+              "content":tech_des
+          }
+      ],
+      model="qwen-3-32b",
+      stream=True,
+      max_completion_tokens=12288,
+      temperature=0.2,
+      top_p=1
+  )
+
+  ALL=""
+  for chunk in stream:
+    ALL+=chunk.choices[0].delta.content or ""
+  return ALL
+
+def generate_technical_description(brief):
+  stream = client.chat.completions.create(
+      messages=[
+          {
+              "role": "system",
+              "content": 'You are a Python Software Engineer. The following is a description of a Python Program your client wants you to build, no further info will be provided after the initial brief. Carefully design the program, which will be placed all in a single .py file once written. The implementation should be as simple as possible, avoid external dependencies as much as possible. Dont write Python code, Write a well formatted technical description (detailed but not too long) for the developers to build the program (for every task, include multiple methods of implementation for the devs to choose from). NO INTROS, NO OUTROS.'
+          },
+          {
+              "role":"user",
+              "content":brief
           }
       ],
       model="qwen-3-32b",
@@ -153,14 +177,16 @@ def generate_python_code(script):
 
 def generate_app(brief):
   tech_des=generate_technical_description(brief).split("</think>")[1]
-  print('t_d')
+  print('t_d_I')
+  tech_des=finallize_technical_description(tech_des,brief).split("</think>")[1]
+  print('t_d_F')
   sudo_code=generate_sudo_code(tech_des).split("</think>")[1]
   print('s_c')
   python_code=generate_python_code(sudo_code).split("</think>")[1][2:]
   print('p_c')
   
   x=0
-  while x<7:
+  while x<2:
     x+=1
     time.sleep(1)
     bugs=find_bugs(python_code).split("</think>")[1][2:]
@@ -168,5 +194,5 @@ def generate_app(brief):
     if "NO ISSUES" in bugs:
       break
     python_code=fix_bugs(python_code,bugs,brief).split("</think>")[1][2:]
-
   return python_code
+
