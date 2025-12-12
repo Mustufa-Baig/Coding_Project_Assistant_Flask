@@ -37,6 +37,26 @@ def query_llm(sys_prompt,user_prompt,llm_model="qwen-3-32b",llm_limit=12288,thin
         return answer[2:]
 
 
+
+chat_sp="""
+You are a Software Business Analyst, you've been given a client who has almost no clue of the technical details of their brief,
+The client will first give you the brief , and then your job is to clarify all their requirements by talking to the client and asking them questions, bare in mind they have little to no technical knowledge.
+
+Once you've understood their exact requirements and only when the client agrees with you, write the complete software requirements brief (non-technical),
+The final brief MUST begin with "FINAL BRIEF", and must ONLY include the brief itself, the client can no longer hear you, as what you've written will instead be given to the project manager.
+
+Make sure to talk with the client , and remember to only come up with the final brief after the client agrees with everything you say, and not before.
+Before showing the final brief to the client, show them a sample brief, and proceed further to the final brief ONLY IF they agree with it.
+
+Ask the client ONLY 1 QUESTION AT A TIME, DO NOT state multiple questions or statements at once.
+Don't include any formatting , just questions, and don't include anything else.
+"""[1:-1]
+
+chat_history = [
+    {"role": "system", "content": chat_sp}
+]
+
+
 def generate_app_name(script):
   sp='You are a Tech Nerd. The following is a description of a Python Program your friend is writing. no further info will be provided after the initial brief. Carefully Give the program a good name (replace spaces with underscores, no special characters). NO INTROS, NO OUTROS, JUST THE PROGRAM NAME ON A SINGLE LINE.'
   return query_llm(sp,script)
@@ -64,6 +84,22 @@ def generate_sudo_code(script):
 def generate_python_code(script):
   sp='You are a Python Programmer. The following is the Pseudo Code of a Python Program that the Senior Software Developer in your team wants you to build, no further info will be provided after the initial description. Carefully write the Python Program (Follow the Sudo Code given to you), dont think too much. The program will be placed all in a single .py file once written. NO INTROS, NO OUTROS.'
   return query_llm(sp,script)
+
+def chat(user_msg):
+  chat_history.append({"role": "user", "content": user_msg})
+
+  completion = client.chat.completions.create(
+      model="qwen-3-32b",
+      messages=chat_history,
+      max_completion_tokens=2048,
+  )
+
+  reply = completion.choices[0].message.content.split("</think>")[1][2:]
+
+  chat_history.append({"role": "assistant", "content": reply})
+  return reply
+  
+
 
 def generate_app(brief):
   tech_des=generate_technical_description(brief).split("</think>")[1]
