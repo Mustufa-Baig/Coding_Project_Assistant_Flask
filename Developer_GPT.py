@@ -82,8 +82,29 @@ def generate_sudo_code(script):
   return query_llm(sp,script)
 
 def generate_python_code(script):
-  sp='You are a Python Programmer. The following is the Pseudo Code of a Python Program that the Senior Software Developer in your team wants you to build, no further info will be provided after the initial description. Carefully write the Python Program (Follow the Sudo Code given to you), dont think too much. The program will be placed all in a single .py file once written. NO INTROS, NO OUTROS.'
+  sp= 'You are a Python Programmer. The following is the Pseudo Code of a Python Program that the Senior Software Developer in your team wants you to build, no further info will be provided after the initial description. Carefully write the Python Program (Follow the Pseudo Code given to you), dont think too much. The program will be placed all in a single .py file once written. NO INTROS, NO OUTROS.'
   return query_llm(sp,script)
+
+
+def design_solution(py_code,problem,sol,filename):
+  sp= 'You are a Python Software Engineer. The following is a faulty Python code by the name of : " '+filename+' " with the following problem : " '+problem+' " , which can be fixed using the following method : " '+sol+' " . No further info will be provided. Carefully re-design the entire program. Dont write Python code, Write a well formatted technical description (detailed but not too long) for the developers to build the program (the developers have no idea about the prior version of the program). NO INTROS, NO OUTROS.'
+  return query_llm(sp,code)
+
+
+
+def debug_existing_code(problem, sol, code, filename):
+  tec_des=design_solution(code,problem,sol,filename).split("</think>")[1]
+  print(tec_des)
+
+  sudo_code=generate_sudo_code(tec_des).split("</think>")[1]
+  print(sudo_code)
+
+  python_code=generate_python_code(sudo_code)
+  
+  return python_code
+
+
+
 
 def chat(user_msg):
   chat_history.append({"role": "user", "content": user_msg})
