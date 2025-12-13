@@ -14,7 +14,7 @@ templates = Jinja2Templates(directory="templates")
 def build_app(request: Request,brief: str = Form(...)):
 	print(brief)
 	code=Developer_GPT.generate_app(brief)
-	title_name=max(Developer_GPT.generate_app_name(brief).split("</think>")[1].split('\n'))
+	title_name=max(Developer_GPT.generate_app_name(brief).split('\n'))
 	print("Generated",title_name)
 	try:
 		code=code.split("```python")[1].split("```")[0]
@@ -35,6 +35,14 @@ def home():
 def home():
 	html=""
 	with open('file.html','r') as file:
+		html=file.read()
+
+	return HTMLResponse(content=html)
+
+@app.get("/fix")
+def home():
+	html=""
+	with open('file3.html','r') as file:
 		html=file.read()
 
 	return HTMLResponse(content=html)
@@ -62,6 +70,32 @@ async def chat(request: Request):
     	return {"reply":reply.replace("FINAL BRIEF",''),'final':'yes'}
     
     return {"reply": reply,'final':'no'}
+
+
+@app.post("/debug_code", response_class=HTMLResponse)
+def debug_code(
+    request: Request,
+    problem: str = Form(...),
+    sol: str = Form(...),
+    code: str = Form(...),
+    filename: str = Form(...)
+):
+    print("Debug request received for:", filename)
+
+    debug_output = Developer_GPT.debug_existing_code(
+        problem=problem,
+        sol=sol,
+        code=code,
+        filename=filename
+    )
+
+    try:
+        debug_output = debug_output.split("```")[1]
+    except Exception:
+        pass
+
+    print("Fixed:",filename)
+    return templates.TemplateResponse("file2.html", {"request": request, "title": "Fixed: "+filename, "code": debug_output})
 
 
 if __name__ == "__main__":

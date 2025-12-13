@@ -71,6 +71,7 @@ def fix_bugs(code,bugs,brief):
 
 
 def finallize_technical_description(tech_des,brief):
+  sp='You are a Python Software Engineer. The following is a technical description written by your fellow Software Engineer, analyses it and figure out the safest and most primitive way to make the Software, the original brief given by the client was "'+brief+'" , no further info will be provided after the initial description. Carefully design the program, which will be placed all in a single .py file once written. Dont write Python code, Write a well formatted technical description (detailed but not too long) for the developers to build the program. NO INTROS, NO OUTROS.'
   return query_llm(sp,tech_des)
 
 def generate_technical_description(brief):
@@ -88,15 +89,15 @@ def generate_python_code(script):
 
 def design_solution(py_code,problem,sol,filename):
   sp= 'You are a Python Software Engineer. The following is a faulty Python code by the name of : " '+filename+' " with the following problem : " '+problem+' " , which can be fixed using the following method : " '+sol+' " . No further info will be provided. Carefully re-design the entire program. Dont write Python code, Write a well formatted technical description (detailed but not too long) for the developers to build the program (the developers have no idea about the prior version of the program). NO INTROS, NO OUTROS.'
-  return query_llm(sp,code)
+  return query_llm(sp,py_code)
 
 
 
 def debug_existing_code(problem, sol, code, filename):
-  tec_des=design_solution(code,problem,sol,filename).split("</think>")[1]
+  tec_des=design_solution(code,problem,sol,filename)
   print(tec_des)
 
-  sudo_code=generate_sudo_code(tec_des).split("</think>")[1]
+  sudo_code=generate_sudo_code(tec_des)[1]
   print(sudo_code)
 
   python_code=generate_python_code(sudo_code)
@@ -123,23 +124,23 @@ def chat(user_msg):
 
 
 def generate_app(brief):
-  tech_des=generate_technical_description(brief).split("</think>")[1]
+  tech_des=generate_technical_description(brief)
   print('t_d_I')
-  tech_des=finallize_technical_description(tech_des,brief).split("</think>")[1]
+  tech_des=finallize_technical_description(tech_des,brief)
   print('t_d_F')
-  sudo_code=generate_sudo_code(tech_des).split("</think>")[1]
+  sudo_code=generate_sudo_code(tech_des)
   print('s_c')
-  python_code=generate_python_code(sudo_code).split("</think>")[1][2:]
+  python_code=generate_python_code(sudo_code)[2:]
   print('p_c')
   
   x=0
   while x<2:
     x+=1
     time.sleep(1)
-    bugs=find_bugs(python_code).split("</think>")[1][2:]
+    bugs=find_bugs(python_code)[2:]
     print(bugs)
     if "NO ISSUES" in bugs:
       break
-    python_code=fix_bugs(python_code,bugs,brief).split("</think>")[1][2:]
+    python_code=fix_bugs(python_code,bugs,brief)[2:]
   return python_code
 
