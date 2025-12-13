@@ -39,6 +39,8 @@
         .options {
             display: flex;
             gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .option-card {
@@ -54,7 +56,7 @@
 
         .option-card:hover {
             transform: translateY(-6px);
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.35);
         }
 
         .option-card h2 {
@@ -84,6 +86,11 @@
         <a href="/chat" class="option-card">
             <h2>Chat</h2>
             <p>Talk with the assistant and explore your project idea</p>
+        </a>
+
+        <a href="/fix" class="option-card">
+            <h2>Debug</h2>
+            <p>Fix bugs and errors of your pre-existing projects</p>
         </a>
     </div>
 
